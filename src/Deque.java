@@ -15,6 +15,10 @@ public class Deque<Item> implements Iterable<Item> {
         private Node current = first;
 
         public boolean hasNext() {
+            if (isEmpty()) {
+                return false;
+            }
+
             return current != last.next;
         }
 
@@ -23,7 +27,7 @@ public class Deque<Item> implements Iterable<Item> {
         }
 
         public Item next() {
-            if (isEmpty()) {
+            if (isEmpty() || !hasNext()) {
                 throw new NoSuchElementException();
             }
 
@@ -33,19 +37,18 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
-    // add item for the first time
-    private void addFirstItem(Item item) {
-        first = new Node();
-        first.item = item;
-        last = first;
-    }
-
-
     // construct an empty deque
     public Deque() {
         first = null;
         last = null;
         size = 0;
+    }
+
+    // add item for the first time
+    private void addFirstItem(Item item) {
+        first = new Node();
+        first.item = item;
+        last = first;
     }
 
     // is the deque empty?
@@ -106,9 +109,12 @@ public class Deque<Item> implements Iterable<Item> {
         }
 
         Item item = first.item;
-        first = first.next;
 
-        if (!isEmpty()) {
+        if (first == last) {
+            first = null;
+            last = null;
+        } else {
+            first = first.next;
             first.prev = null;
         }
 
@@ -124,9 +130,12 @@ public class Deque<Item> implements Iterable<Item> {
         }
 
         Item item = last.item;
-        last = last.prev;
 
-        if (!isEmpty()) {
+        if (first == last) {
+            first = null;
+            last = null;
+        } else {
+            last = last.prev;
             last.next = null;
         }
 
@@ -143,8 +152,6 @@ public class Deque<Item> implements Iterable<Item> {
     // unit testing (required)
     public static void main(String[] args) {
         Deque<String> deque = new Deque<>();
-
-        String test = "I will be back";
 
         System.out.print("Is Empty? ");
         System.out.print(deque.isEmpty());
@@ -177,8 +184,8 @@ public class Deque<Item> implements Iterable<Item> {
         System.out.print(deque.isEmpty());
         System.out.print("\n");
 
-        System.out.print(deque.removeLast() + "\n");
         System.out.print(deque.removeFirst() + "\n");
+        System.out.print(deque.removeLast() + "\n");
 
         System.out.print(deque.size());
         System.out.print("\n");

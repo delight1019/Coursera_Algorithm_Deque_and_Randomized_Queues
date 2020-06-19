@@ -1,5 +1,6 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
     private Node first, last;
@@ -12,10 +13,16 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
-        private Node current = first;
+        private boolean[] iterated = new boolean[size()];
 
         public boolean hasNext() {
-            return current != last.next;
+            for (boolean isIterated : iterated) {
+                if (!isIterated) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void remove() {
@@ -27,10 +34,25 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 throw new NoSuchElementException();
             }
 
-            Item item = current.item;
-            current = current.next;
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
 
-            return item;
+            int randomN = StdRandom.uniform(size);
+
+            while (iterated[randomN]) {
+                randomN = StdRandom.uniform(size);
+            }
+
+            Node current = first;
+
+            for (int n = 0; n < randomN; n++) {
+                current = current.next;
+            }
+
+            iterated[randomN] = true;
+
+            return current.item;
         }
     }
 
@@ -79,18 +101,24 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
 
-        int N = StdRandom.uniform(size);
+        int randomN = StdRandom.uniform(size);
         Node current = first;
 
-        for (int n = 0; n < N; n++) {
+        for (int n = 0; n < randomN; n++) {
             current = current.next;
         }
 
-        if (current == first) {
+        if (first == last) {
+            first = null;
+            last = null;
+        }
+        else if (current == first) {
             first = current.next;
+            first.prev = null;
         }
         else if (current == last) {
             last = current.prev;
+            last.next = null;
         }
         else {
             current.prev.next = current.next;
@@ -104,10 +132,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // return a random item (but do not remove it)
     public Item sample() {
-        int N = StdRandom.uniform(size);
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        int randomN = StdRandom.uniform(size);
         Node current = first;
 
-        for (int n = 0; n < N; n++) {
+        for (int n = 0; n < randomN; n++) {
             current = current.next;
         }
 
@@ -123,7 +155,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public static void main(String[] args) {
         RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<>();
 
-        for(int i = 1; i <= 20; i++) {
+        System.out.print("Is Empty? ");
+        System.out.print(randomizedQueue.isEmpty());
+        System.out.print("\n");
+
+        for (int i = 1; i <= 10; i++) {
             randomizedQueue.enqueue(i);
         }
 
@@ -132,22 +168,37 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         System.out.print("\n");
 
         System.out.print("Numbers in randomized queue\n");
-        for(int i : randomizedQueue) {
+        for (int i : randomizedQueue) {
             System.out.print(i);
             System.out.print(" ");
         }
         System.out.print("\n");
 
+        System.out.print("Numbers in randomized queue\n");
+        for (int i : randomizedQueue) {
+            System.out.print(i);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
+
+        System.out.print("Is Empty? ");
+        System.out.print(randomizedQueue.isEmpty());
+        System.out.print("\n");
+
         System.out.print("Deque random number ");
-        for(int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 3; i++) {
             System.out.print(randomizedQueue.dequeue());
             System.out.print(" ");
         }
 
         System.out.print("\n");
 
+        System.out.print("Is Empty? ");
+        System.out.print(randomizedQueue.isEmpty());
+        System.out.print("\n");
+
         System.out.print("Numbers in randomized queue\n");
-        for(int i : randomizedQueue) {
+        for (int i : randomizedQueue) {
             System.out.print(i);
             System.out.print(" ");
         }
@@ -158,7 +209,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         System.out.print("\n");
 
         System.out.print("Sample random number ");
-        for(int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 10; i++) {
             System.out.print(randomizedQueue.sample());
             System.out.print(" ");
         }
