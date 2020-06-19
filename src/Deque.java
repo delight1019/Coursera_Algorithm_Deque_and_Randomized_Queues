@@ -3,6 +3,7 @@ import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
     private Node first, last;
+    private int size = 0;
 
     private class Node {
         Item item;
@@ -44,6 +45,7 @@ public class Deque<Item> implements Iterable<Item> {
     public Deque() {
         first = null;
         last = null;
+        size = 0;
     }
 
     // is the deque empty?
@@ -53,7 +55,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // return the number of items on the deque
     public int size() {
-        return -1;
+        return size;
     }
 
     // add the item to the front
@@ -72,6 +74,8 @@ public class Deque<Item> implements Iterable<Item> {
             first.next = oldFirst;
             oldFirst.prev = first;
         }
+
+        size++;
     }
 
 
@@ -91,6 +95,8 @@ public class Deque<Item> implements Iterable<Item> {
             last.prev = oldLast;
             oldLast.next = last;
         }
+
+        size++;
     }
 
     // remove and return the item from the front
@@ -105,6 +111,8 @@ public class Deque<Item> implements Iterable<Item> {
         if (!isEmpty()) {
             first.prev = null;
         }
+
+        size--;
 
         return item;
     }
@@ -122,6 +130,8 @@ public class Deque<Item> implements Iterable<Item> {
             last.next = null;
         }
 
+        size--;
+
         return item;
     }
 
@@ -136,20 +146,45 @@ public class Deque<Item> implements Iterable<Item> {
 
         String test = "I will be back";
 
+        System.out.print("Is Empty? ");
+        System.out.print(deque.isEmpty());
+        System.out.print("\n");
+
         deque.addLast("be");
         deque.addLast("back");
         deque.addFirst("will");
         deque.addFirst("I");
+
+        System.out.print("Is Empty? ");
+        System.out.print(deque.isEmpty());
+        System.out.print("\n");
 
         for (String word : deque) {
             System.out.print(word + " ");
         }
 
         System.out.print("\n");
+        System.out.print(deque.size());
+        System.out.print("\n");
 
         System.out.print(deque.removeFirst() + "\n");
         System.out.print(deque.removeLast() + "\n");
+
+        System.out.print(deque.size());
+        System.out.print("\n");
+
+        System.out.print("Is Empty? ");
+        System.out.print(deque.isEmpty());
+        System.out.print("\n");
+
         System.out.print(deque.removeLast() + "\n");
         System.out.print(deque.removeFirst() + "\n");
+
+        System.out.print(deque.size());
+        System.out.print("\n");
+
+        System.out.print("Is Empty? ");
+        System.out.print(deque.isEmpty());
+        System.out.print("\n");
     }
 }
